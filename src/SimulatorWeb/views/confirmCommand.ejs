@@ -1,0 +1,38 @@
+<style>
+  label,
+  input {
+    display: block;
+  }
+  .dialogTbl input {
+    margin-bottom: 12px;
+    width: 95%;
+    padding: 0.4em;
+    line-height: 15px;
+  }
+  fieldset {
+    padding: 0;
+    border: 0;
+    margin-top: 5px;
+  }
+</style>
+<div id="dialog-form" class="dialogTbl" title="">
+  <form id="form"></form>
+</div>
+
+<script id="dialog-tbl-template" type="template">
+  <fieldset >
+    {{#mdNodeList}}
+      <label for="dialog-{{ nodeId }}">{{ nodeName }}</label>
+      <input
+        type="text"
+        id="dialog-{{ nodeId }}"
+        class="ui-widget-content ui-corner-all"
+        data-node-id="{{ nodeId }}"
+        value="{{ nodeData }}"
+      />
+      <!-- Allow form submission with keyboard without duplicating the dialog button -->
+      <input type="submit" tabindex="-1" style="position:absolute; top:-1000px">
+    {{/mdNodeList}}
+
+  </fieldset>
+</script>

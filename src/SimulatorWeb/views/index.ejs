@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <!-- <meta http-equiv="X-UA-Compatible" content="IE=edge"> -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- 위 3개의 메타 태그는 *반드시* head 태그의 처음에 와야합니다; 어떤 다른 콘텐츠들은 반드시 이 태그들 *다음에* 와야 합니다 -->
+    <script src="/js/lodash.min.js"></script>
+
+    <!-- Default Publishing -->
+    <!-- jQuery (부트스트랩의 자바스크립트 플러그인을 위해 필요합니다) -->
+    <script src="/js/jquery-3.4.1.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="/js/bootstrap.min.js"></script>
+
+    <link href="/css/template/svg.filter.css" rel="stylesheet" />
+    <link href="/css/template/common.css" rel="stylesheet" />
+    <link href="/css/template/dark-theme.css" rel="stylesheet" />
+
+    <script src="/js/handlebars.min.js"></script>
+
+    <!-- SVG Map 을 생성하기 위한 필수 Library -->
+    <script src="/js/svg/svg.js"></script>
+
+    <!-- SVG Map을 생성하고 관리하기 위한 Core Library -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css" />
+    <script src="/js/jquery-ui.min.js"></script>
+  </head>
+
+  <!-- 서버사이드 데이터 정의 -->
+  <script>
+    // Map 정보
+    var map = <%- JSON.stringify(map) %>;
+  </script>
+
+  <body>
+    <div id="wrap" class="wrap">
+      <!--메인-->
+      <div id="container_body" class="container_body">
+        <div class="container_row navi">
+          <div class="user_box ml_2rem" id="operationMode">
+            <span class="search_title">제어 모드: </span>
+            <select class="form-control ml_2rem" id="modeSelect">
+              <option value="view">뷰 모드</option>
+              <option value="control">제어 모드</option>
+              <option value="develop">개발 모드</option>
+            </select>
+          </div>
+          <div class="command_status">
+            <img id="updateIsApiClientConnImg" src="" />
+            <div id="updateIsApiClientConnDiv"></div>
+
+            <div id="contentTypeCategory" class="ml_2rem">
+              <input
+                type="button"
+                name="contentTypeBtn"
+                class="btn btn-danger"
+                data-view="structure"
+                value="구성도"
+              />
+              <input
+                type="button"
+                name="contentTypeBtn"
+                class="btn btn-default"
+                data-view="operStatusTable"
+                value="표"
+              />
+            </div>
+          </div>
+        </div>
+        <%- include("./confirmCommand.ejs") %>
+        <!-- Content -->
+        <div id="controlContent">
+          <!-- Svg Map -->
+          <div class="" id="structure">
+            <%- include("./plugInMapControlBox.ejs") %>
+            <!-- SVG canvas -->
+            <div class="svg_area" id="canvas">
+              <%- include('./filter.ejs') %> <%- include('./filter.btn.ejs') %>
+            </div>
+          </div>
+          <!-- Tables -->
+          <div class="hidden" id="operStatusTable">
+            <div class="container_row">
+              <p class="table_desc_area">
+                명령 목록 - 갱신시간 &nbsp;<span id="cmdUpdateDate"></span>
+              </p>
+              <div class="table-responsive default_area">
+                <table id="cmdTableBody" class="table table-bordered number_table">
+                  <thead>
+                    <tr>
+                      <th data-field="wrapCmdFormat">명령 형식</th>
+                      <th data-field="wrapCmdType">명령 타입</th>
+                      <th data-field="wrapCmdStep">명령 단계</th>
+                      <th data-field="wrapCmdId">명령 ID</th>
+                      <th data-field="wrapCmdName">명령 이름</th>
+                      <th data-field="wrapCmdCancel">명령 취소</th>
+                    </tr>
+                  </thead>
+                  <tbody id="cmdTableBodyDom">
+                    <script id="cmdTableTemplate" type="template">
+                      {{#if commandList}}
+                        {{#each commandList}}
+                        <tr data-index={{@index}}>
+                          <td class="text-center">{{ wrapCmdFormat }}</td>
+                          <td class="text-center">{{ wrapCmdType }}</td>
+                          <td class="text-center">{{ wrapCmdStep }}</td>
+                          <td class="text-center">{{ wrapCmdId }}</td>
+                          <td class="text-center">{{ wrapCmdName }}</td>
+                          <td class="text-center"><button class="btn btn-primary" name="reqCancelCmd">취소</button></td>
+                        </tr>
+                          {{/each}}
+                          {{else}}
+                        <tr>
+                          <td colspan="6" class="text-center">There are no commands during execution</td>
+                        </tr>
+                      {{/if}}
+                    </script>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="container_row">
+              <p class="table_desc_area">
+                장치 상태 정보 목록 - 갱신시간 &nbsp;<span id="nodeUpdateDate"></span>
+              </p>
+              <div class="table-responsive default_area">
+                <table id="nodeTableBody" class="table table-bordered number_table">
+                  <thead>
+                    <tr>
+                      <th data-field="ntn">장치 명</th>
+                      <th data-field="ni">장치 ID</th>
+                      <th data-field="pnl">관련 장소</th>
+                      <th data-field="d">데이터</th>
+                    </tr>
+                  </thead>
+                  <tbody id="nodeTableBodyDom">
+                    <script id="nodeTableTemplate" type="template">
+                      {{#each mdNodeStorage}}
+                      <tr>
+                        <td class="">{{ ndName }} ({{ nodeName }})</td>
+                        <td class="">{{ nodeId }}</td>
+                        <td class="">{{ placeNameList }}</td>
+                        <td class="">{{ nodeData }}</td>
+                      </tr>
+                      {{/each}}
+                    </script>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map 데이터를 기반으로 SVG를 생성 및 관리할 Module -->
+    <script src="/js/drawSvg/drawSvg-base.js"></script>
+    <script src="/js/drawSvg/drawTriggerImg.js"></script>
+
+    <!-- Default Setting -->
+    <script>
+      // 명령 목록을 보여줄 돔
+      var $cmdTableDom;
+      var $cmdUpdateDom;
+      // 노드 상태를 보여줄 돔
+      var $nodeTableDom;
+      var $nodeUpdateDom;
+      //  자동 갱신될 명령 테이블, 노드 테이블 Dom Id
+      function initControlTableId(
+        cmdTableDomId,
+        cmdUpdateDomId,
+        nodeTableDomId,
+        nodeUpdateDomId,
+      ) {
+        $cmdTableDom = $('#' + cmdTableDomId);
+        $cmdUpdateDom = $('#' + cmdUpdateDomId);
+        $nodeTableDom = $('#' + nodeTableDomId);
+        $nodeUpdateDom = $('#' + nodeUpdateDomId);
+      }
+
+      // 테이블 ID 정의
+      initControlTableId(
+        'cmdTableBody',
+        'cmdUpdateDate',
+        'nodeTableBody',
+        'nodeUpdateDate',
+      );
+    </script>
+
+    <!-- 제어 및 Socket.IO 이벤트 바인딩 -->
+    <script>
+      const socket = io();
+      // 갱신 노드 반영 {ni: NodeId, ntn: Node Target Name, d: data, pnl: Place Target Name}[]
+      socket.on('updateNode', (wsNodeList = []) => {
+        wsNodeList.forEach(wsNodeInfo => {
+          showNodeData(wsNodeInfo.ni, wsNodeInfo.d);
+        });
+
+        // nodeList Handlebars compile
+        const nodeTbodyTemplate = $('#nodeTableTemplate').html();
+        const nodeTbodyBindTemplate = Handlebars.compile(nodeTbodyTemplate);
+        const nodeTableBody = nodeTbodyBindTemplate({
+          mdNodeStorage: mdNodeStorage.values(),
+        });
+
+        $('#nodeTableBodyDom > tr ').empty();
+        $('#nodeTableBodyDom').append(nodeTableBody);
+
+        // 노드 정보 갱신 시각 반영
+        $nodeUpdateDom.html(new Date().toLocaleString());
+      });
+    </script>
+
+    <!-- SVG Map 세팅 -->
+    <script>
+      initDrawSvg();
+
+      // 캔버스 생성
+      const svgCanvas = SVG().addTo(`#canvas`).size('100%', '100%');
+      // SVG Canvas 속성 정의
+      svgCanvas.attr({
+        id: 'svgCanvas',
+        class: 'svg_map',
+        preserveAspectRatio: 'xMidYMin meet',
+      });
+
+      // defs Element를 SVG Element 자식 요소 최상위로 정의
+      svgCanvas.defs();
+      // string으로 변환하여 붙여넣음. Dom 요소로 붙여넣을 경우 동작하지 않음
+      $('defs').html($('#svgFilter').html() + $('#svgBtnFilter').html());
+      // id 중복을 막기위한 filter 요소 삭제
+      document.querySelector('#svgFilter').remove();
+      document.querySelector('#svgBtnFilter').remove();
+
+      drawSvgBasePlace(svgCanvas); // 멥 그리기
+
+      // // FIXME: TEST 용
+      // setTimeout(() => {
+      //   runSimulator();
+      // }, 100);
+
+      // console.log(mdPlaceStorage);
+    </script>
+    <!-- 상단 카테고리 버튼 세팅 -->
+    <script>
+      // 데이터 뷰 버튼 선택에 따라 보여지는 View 분기 처리
+      $('input[name="contentTypeBtn"]').on('click', function () {
+        var viewType = $(this).data('view');
+
+        // 버튼 색상 변경
+        $('#contentTypeCategory')
+          .children('input')
+          .each(function (index, inputElement) {
+            var currDataView = $(inputElement).data('view');
+            if (currDataView === viewType) {
+              $(this).addClass('btn-danger');
+              $(this).removeClass('btn-default');
+            } else {
+              $(this).removeClass('btn-danger');
+              $(this).addClass('btn-default');
+            }
+          });
+
+        // 선택한 데이터 뷰 선택 값에 따라 hidden 설정
+        $('#controlContent')
+          .children('div')
+          .each(function (index, domElement) {
+            if (domElement.id === viewType) {
+              $(`#${domElement.id}`).removeClass('hidden');
+            } else {
+              $(`#${domElement.id}`).addClass('hidden');
+            }
+          });
+      });
+    </script>
+
+    <script>
+      // 시작시 개발 모드로 세팅
+      $('#modeSelect')
+        // .val('control')
+        .val('develop')
+        .trigger('change');
+    </script>
+
+    <!-- 사용자 데이터 변경 처리 -->
+    <script>
+      var dialog, form;
+
+      // 테이블 형태 데이터 변경 시(Jquery UI dialog-form)
+      function changeTableData() {
+        $('#dialog-form fieldset')
+          .find('input')
+          .map((idx, dom) => {
+            const data = $(dom).val();
+            const nodeId = $(dom).data('nodeId');
+            if (data.length) {
+              var pattern = /^[-]?\d+(?:[.]\d+)?$/;
+
+              if (pattern.test(data)) {
+                socket.emit('changeNodeData', nodeId, Number(data));
+              } else {
+                socket.emit('changeNodeData', nodeId, data);
+              }
+            }
+          });
+        $(dialog).dialog('close');
+      }
+
+      // 노드 클릭 이벤트 설정
+      mdNodeStorage.forEach(mdNodeInfo => {
+        const { svgEleBg, svgEleData, nodeId } = mdNodeInfo;
+
+        if (svgEleBg !== undefined) {
+          // svg 클릭 이벤트 삭제
+          svgEleBg.click(null);
+
+          svgEleBg.click(() => {
+            const data = prompt('변경하고자 하는 값 입력');
+            if (data !== null) {
+              socket.emit('changeNodeData', nodeId, data);
+            }
+          });
+        }
+      });
+
+      // 테이블 클릭 이벤트 설정
+      mdPlaceStorage.forEach(mdPlaceInfo => {
+        const { svgEleBg, svgEleTbls = [], placeName, nodeList = [] } = mdPlaceInfo;
+        // 하부 Node 데이터가 존재할 경우
+        if (svgEleTbls.length) {
+          // 데이터 영역 클릭 이벤트
+          svgEleBg.click(() => {
+            const dynamicTblDom = $('#dialog-tbl-template').html();
+            const dynamicTblTemplate = Handlebars.compile(dynamicTblDom);
+            // 실제로 그리는 순서에 맞게 데이터 가져옴
+            const resultTempalte = dynamicTblTemplate({
+              mdNodeList: svgEleTbls.map(({ nodeId }) => mdNodeStorage.get(nodeId)),
+            });
+
+            $('#form').html(resultTempalte);
+
+            // Dialog 메시지를 생성하여 dialog title, 버튼 정보 전송
+            dialog = $('#dialog-form').dialog({
+              width: 300,
+              modal: true,
+              title: placeName,
+              open: function () {
+                $('.ui-widget-overlay').bind('click', () => {
+                  $(this).dialog('close');
+                });
+              },
+              buttons: {
+                변경: changeTableData,
+                취소: function () {
+                  $(this).dialog('close');
+                },
+              },
+            });
+
+            // 사용자가 엔터 및 submit 액션을 취했을 경우
+            form = dialog.find('form').on('submit', function (event) {
+              event.preventDefault();
+              changeTableData();
+            });
+          });
+        }
+      });
+    </script>
+    <script>
+      $('#container_body').removeClass('hidden');
+    </script>
+  </body>
+</html>

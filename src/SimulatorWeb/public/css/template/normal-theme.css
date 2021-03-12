@@ -1,0 +1,207 @@
+﻿/***************************************/
+/************ Master ************/
+/***************************************/
+body {
+  color: #333;
+  background: #cccaca;
+}
+
+body a {
+  color: #333;
+}
+
+header {
+  background: #122330;
+  border-bottom: #091219 solid 1px;
+}
+
+.table thead {
+  background: linear-gradient(#cccccc, #a9a9a9);
+  background: linear-gradient(rgb(34, 80, 150), rgb(22, 58, 110));
+  background: linear-gradient(rgb(42, 140, 85), rgb(52, 115, 61));
+  color: white;
+}
+
+/***************************************/
+/************ Header Master ************/
+/***************************************/
+.user_box .user_id {
+  color: #e5ff00;
+}
+
+.user_box .logout {
+  color: #fff;
+  background: linear-gradient(#555, #444);
+}
+
+.user_box .logout:hover {
+  background: linear-gradient(#444, #333);
+}
+
+.navbar-inverse .navbar-toggle {
+  background-color: #333;
+}
+/***************************************/
+/************** Container **************/
+/***************************************/
+/* 가장 기본적으로 쓰일 컴포넌트 스타일 */
+.default_area {
+  background: linear-gradient(to bottom right, #f3f3f3, #fafafa);
+  box-shadow: 5px 2px 10px #b7b7b7;
+}
+
+.default_search_area {
+  background: linear-gradient(rgb(34, 80, 150), rgb(22, 58, 110));
+  box-shadow: 5px 2px 10px #b7b7b7;
+  border-top: 1px solid rgb(34, 80, 150);
+  border-bottom: 1px solid rgb(22, 58, 110);
+  padding-right: 10px;
+  padding-left: 10px;
+  color: white;
+  box-shadow: 2px 2px 10px #a1a1a1;
+}
+
+.container_row {
+  /* padding: 0px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between; */
+}
+
+.container_body .min-table {
+  min-height: 500px;
+  background: white;
+}
+
+/***************************************/
+/*         Container - Side            */
+/***************************************/
+/* 발전 현황 정보 */
+.component_piece_area.side_section_power {
+  background: linear-gradient(rgb(42, 140, 85), rgb(52, 115, 61));
+  box-shadow: 3px 3px 10px #a1a1a1;
+}
+
+/* 발전 현황 정보 데이터 색상 */
+.side_section_power .sensor_data_view > p:nth-child(2) {
+  color: #ffee00e8;
+}
+
+/* 생육 환경 정보 */
+.component_piece_area.side_section_growth {
+  background: linear-gradient(#337497, #235975);
+  box-shadow: 3px 3px 10px #a1a1a1;
+}
+
+/* 생육 환경 정보 데이터 색상 */
+.side_section_growth .sensor_data_view > p:nth-child(2) {
+  color: #00ff14;
+}
+
+.power_img {
+  /* background: url('../../image/development.jpg'); */
+}
+
+/***************************************/
+/*         Container - Body            */
+/***************************************/
+
+/* 박스 In Chart */
+.component_piece_area {
+  background: #fff;
+  /* border: 1px solid #d1d1d1; */
+  box-shadow: 1px 1px 10px #a1a1a1;
+}
+
+.data_title_section,
+.data_view_section {
+  color: #fff;
+}
+
+.component_piece_area > header {
+  background: linear-gradient(rgb(34, 80, 150), rgb(22, 58, 110));
+  border: 1px solid #d1d1d1;
+  border-top: 1px solid rgb(34, 80, 150);
+  border-bottom: 1px solid rgb(22, 58, 110);
+  color: #fff;
+}
+
+.component_piece_area .p_column_rem {
+  padding: 2rem 0 0;
+  overflow: hidden;
+}
+/* FIXME: */
+.component_piece_area .p_column_rem_2 {
+  padding: 1rem;
+  overflow-y: hidden;
+  overflow-x: auto;
+}
+
+/* Body 단위 색상 검은색 */
+.sensor_data_view > p:nth-child(2) {
+  color: #097ad1;
+}
+
+.component_ele_status {
+  border: 0.1rem solid #443c3c;
+}
+
+.component_ele_status > header {
+  color: #fff;
+}
+
+.table-location-href tbody tr:hover {
+  background-color: #19462b;
+}
+
+/* 아래에 나오는 테이블을 설명하기 위한 Descrition 영역 */
+.table_desc_area {
+  background: linear-gradient(#3baf69, #349059);
+  box-shadow: 0.3em 0.2em 0.3em #b7b7b7;
+}
+
+.table_desc_area > span {
+  color: #fff934;
+}
+
+.search_box input[type='text'] {
+  border: 1px solid #eee;
+  color: #555;
+}
+
+.search_box > .search_title {
+  color: #fff;
+}
+
+.submit_box > button {
+  border: 1px solid #18984b;
+  background: linear-gradient(#3baf69, #349059);
+}
+
+.submit_box > button:hover {
+  background: linear-gradient(#359b5d, #2c774a);
+}
+
+.submit_box > button.btn-danger {
+  border: 1px solid #aa3224;
+  background: linear-gradient(#e74c3c, #aa3224);
+}
+
+.submit_box > button.btn-danger:hover {
+  background: linear-gradient(#862217, #aa3224);
+}
+
+.rtsp_container {
+  display: flex;
+}
+
+.rtsp_container section:first-child {
+  width: 20%;
+
+  /* background: #c4eaff; */
+}
+
+.rtsp_container section:last-child {
+  width: 80%;
+  background: #333;
+}
