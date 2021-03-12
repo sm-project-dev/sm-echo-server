@@ -6,24 +6,24 @@ const Model = require('../Model');
 
 const protocol = require('./protocol');
 
-const ModbusRtuConverter = require('../../Default/ModbusRtuConverter');
+const ModbusRtuConverter = require('../../Default/Converter/ModbusRtuConverter');
 
-class EchoServer extends Model {
+class EchoServer extends ModbusRtuConverter {
   /**
    * protocol_info.option --> true: 3.3kW, any: 600W
    * @param {protocol_info} protocolInfo
    * @param {mDeviceMap} deviceMap
    */
   constructor(protocolInfo, deviceMap) {
-    super(protocolInfo, deviceMap);
+    super(protocolInfo);
+
+    this.model = new Model(protocolInfo, deviceMap);
 
     this.decodingTable = protocol(this.protocolInfo);
 
-    this.init();
+    this.init(this.model);
 
     this.isExistCrc = false;
-    this.name = 2;
-    this.modbusRtuConverter = new ModbusRtuConverter(this);
   }
 
   /**
@@ -54,15 +54,15 @@ class EchoServer extends Model {
       decodingTable = this.decodingTable.INSIDE_SITE;
     }
 
-    return this.modbusRtuConverter.readInputRegister(dataLogger, bufData, decodingTable);
+    return super.readInputRegister(dataLogger, bufData, decodingTable);
   }
 
-  /**
-   * DBS에서 요청한 명령
-   * @param {Buffer} bufData
-   */
-  onData(bufData) {
-    return this.modbusRtuConverter.onData(bufData);
-  }
+  // /**
+  //  * DBS에서 요청한 명령
+  //  * @param {Buffer} bufData
+  //  */
+  // onData(bufData) {
+  //   return this.modbusRtuConverter.onData(bufData);
+  // }
 }
 module.exports = EchoServer;

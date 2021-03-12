@@ -48,6 +48,7 @@ module.exports = class extends EventEmitter {
   }
 
   setModbus() {
+    // BU.CLIN(this.dataLoggerList);
     this.dataLoggerList.forEach(dlInfo => {
       const { nodeList } = dlInfo;
       // 모드 버스 레지스터 범위가 FC=03 기준 49999
@@ -55,14 +56,16 @@ module.exports = class extends EventEmitter {
 
       dlInfo.modbusStorage = modbusStorage;
 
+      // console.dir(this.nodeList);
       nodeList.forEach(nodeId => {
+        // console.log(nodeId);
         const nodeInfo = _.find(this.nodeList, { nodeId });
 
         if (nodeInfo) {
           const { modbusInfo } = nodeInfo;
           if (modbusInfo) {
             const { address, fnCode, dataLength } = modbusInfo;
-
+            // console.log(fnCode);
             let realAddr = 1;
 
             switch (fnCode) {
